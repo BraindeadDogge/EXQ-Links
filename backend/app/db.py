@@ -1,3 +1,4 @@
+import logging
 import os
 import time
 from contextlib import contextmanager
@@ -23,11 +24,13 @@ def _normalize_url(url: str) -> str:
   return url
 
 
-def init_engine() -> Engine:
+def init_engine(logger: Optional[logging.Logger] = None) -> Engine:
   """Create the SQLAlchemy engine and initialize tables"""
   global _engine, SessionLocal
   if _engine is not None and SessionLocal is not None:
     return _engine
+  if logger is None:
+    logger = logging.getLogger(__name__)
 
   db_url = os.getenv(
     "DATABASE_URL", "postgresql+psycopg://linkshort:linkshort@localhost:5432/linkshort"
@@ -37,6 +40,7 @@ def init_engine() -> Engine:
   pool_size = max(1, int(os.getenv("DB_POOL_MAX", "10")))
   max_overflow = max(0, int(os.getenv("DB_MAX_OVERFLOW", "10")))
 
+  logger.info("Initializing database engine")
   engine = create_engine(
     db_url,
     pool_size=pool_size,
@@ -59,14 +63,21 @@ def init_engine() -> Engine:
   for attempt in range(retries + 1):
     try:
       Base.metadata.create_all(bind=engine)
+      logger.info("Database ready")
       last_error = None
       break
     except OperationalError as exc:
       last_error = exc
       if attempt >= retries:
         break
+      logger.warning(
+          "Database not ready (attempt %d/%d), retrying...",
+          attempt + 1,
+          retries + 1,
+      )
       time.sleep(retry_interval)
   if last_error is not None:
+    logger.error("Database initialization failed after %d attempts", retries + 1)
     raise last_error
   return engine
 
