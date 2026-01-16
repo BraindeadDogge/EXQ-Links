@@ -27,12 +27,12 @@ export default defineNuxtConfig({
       }
     },
     scripts: {
+      defaultScriptOptions: {
+        trigger: 'server'
+      },
       registry: {
         googleTagManager: {
-          id: gtmId,
-          scriptOptions: {
-            trigger: 'server'
-          }
+          id: gtmId
         }
       }
     }
