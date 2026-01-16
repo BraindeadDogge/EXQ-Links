@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+const gtmId = process.env.GTM_ID
+
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
@@ -12,10 +14,22 @@ export default defineNuxtConfig({
   ],
 
   $production: {
+    app: {
+      head: {
+        noscript: gtmId
+          ? [
+              {
+                tagPosition: 'bodyOpen',
+                innerHTML: `<iframe src="https://www.googletagmanager.com/ns.html?id=${gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`
+              }
+            ]
+          : []
+      }
+    },
     scripts: {
       registry: {
         googleTagManager: {
-          id: process.env.GTM_ID
+          id: gtmId
         }
       }
     }
