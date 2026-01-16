@@ -7,8 +7,19 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@vueuse/nuxt',
     'nuxt-og-image',
-    '@nuxt/hints'
+    '@nuxt/hints',
+    '@nuxt/scripts'
   ],
+
+  $production: {
+    scripts: {
+      registry: {
+        googleTagManager: {
+          id: process.env.GTM_ID,
+        }
+      }
+    }
+  },
 
   devtools: {
     enabled: true
