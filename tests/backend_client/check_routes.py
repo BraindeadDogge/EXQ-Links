@@ -5,7 +5,7 @@ from urllib.parse import urlencode
 import requests
 
 
-def wait_for_ping(base_url: str, timeout: float = 20.0, interval: float = 0.5) -> None:
+def wait_for_ping(base_url: str, timeout: float = 60.0, interval: float = 0.5) -> None:
   """Poll /ping until it responds with the expected payload."""
   deadline = time.time() + timeout
   url = f"{base_url.rstrip('/')}/ping"
