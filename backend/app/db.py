@@ -1,9 +1,11 @@
 import os
+import time
 from contextlib import contextmanager
 from typing import Generator, Optional
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session, sessionmaker
 
 from .models import Base
@@ -50,7 +52,22 @@ def init_engine() -> Engine:
     future=True,
   )
 
-  Base.metadata.create_all(bind=engine)
+  retries = max(0, int(os.getenv("DB_CONNECT_RETRIES", "0")))
+  retry_interval = max(0.0, float(os.getenv("DB_CONNECT_RETRY_INTERVAL", "1.0")))
+
+  last_error: Optional[Exception] = None
+  for attempt in range(retries + 1):
+    try:
+      Base.metadata.create_all(bind=engine)
+      last_error = None
+      break
+    except OperationalError as exc:
+      last_error = exc
+      if attempt >= retries:
+        break
+      time.sleep(retry_interval)
+  if last_error is not None:
+    raise last_error
   return engine
 
 
