@@ -50,7 +50,7 @@ async function onSubmit() {
 </script>
 
 <template>
-  <USeparator icon="i-simple-icons-nuxtdotjs" class="h-px" />
+  <USeparator icon="i-lucide-mail" class="h-px" />
 
   <UFooter :ui="{ top: 'border-b border-default' }">
     <template #top>
