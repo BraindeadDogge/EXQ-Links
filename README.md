@@ -24,6 +24,8 @@ docker compose --profile dev up --build
 docker compose --profile dev down
 ```
 
+The backend now uses SQLAlchemy with the `psycopg` driver. `DATABASE_URL` can be provided as `postgresql://...` or `postgresql+psycopg://...`; if you omit `+psycopg`, it will be added automatically.
+
 ## Requirements
   - Docker and Docker Compose orchestrating both backend and database containers (PostgreSQL 15).
   - GitHub Actions powers the CI workflows stored in .github/workflows, while CD is handled entirely by Railway even though no extra deployment code exists in the repo.
@@ -35,6 +37,13 @@ docker compose --profile dev down
   - Feature 2: Built‑in Nuxt 4 Frontend: The index route on the frontend lets you paste a link, get a short URL and see a dowloadable QR code.
   - Feature 3: API and Frontend on Railway: The backend and frontend run on separate Railway services (api.exq.io and exq.io).
   - Feature 4: Cloudflare Integration: DNS is managed by Cloudflare, and a Worker proxies requests like https://exq.io/\<id\> to the API while the API responds with a 301 redirect to the original long URL. Custom domains and SSL certificates are handled by Cloudflare.
+
+## API
+  - `GET /ping` returns a simple health payload.
+  - `GET /shorten?url=` shortens a URL and returns `original_url`, `short_id`, and a `short_url`.
+  - `POST /newsletter/subscribe` accepts `{"email": "you@example.com"}`, returns `201` when a new record is created and `200` if the address was already subscribed.
+  - `GET /<short_id>` redirects to the original URL for that short id.
+  - `GET /debug/log-stores` dumps the most recent 100 stored URLs.
 
 ## Git
 

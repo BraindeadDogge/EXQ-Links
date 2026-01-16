@@ -48,6 +48,32 @@ def check_shortener(base_url: str) -> None:
     )
 
 
+def check_newsletter(base_url: str) -> None:
+  """Subscribe an email and ensure idempotent behavior."""
+  base = base_url.rstrip("/")
+  email = f"tester+{int(time.time())}@example.com"
+  subscribe_url = f"{base}/newsletter/subscribe"
+
+  response = requests.post(subscribe_url, json={"email": email}, timeout=5)
+  response.raise_for_status()
+  payload = response.json()
+
+  if payload.get("email") != email:
+    raise ValueError(f"Unexpected email in response: {payload}")
+  if payload.get("subscribed") is not True:
+    raise ValueError(f"Subscription not acknowledged: {payload}")
+  if payload.get("is_new") is not True:
+    raise ValueError(f"Expected is_new True on first subscribe: {payload}")
+
+  # Second attempt should be idempotent (200) and not blow up.
+  second = requests.post(subscribe_url, json={"email": email}, timeout=5)
+  if second.status_code != 200:
+    raise ValueError(f"Expected 200 on duplicate subscribe, got {second.status_code}")
+  second_payload = second.json()
+  if second_payload.get("is_new") is not False:
+    raise ValueError(f"Expected duplicate subscribe to mark is_new False: {second_payload}")
+
+
 def main() -> int:
   parser = argparse.ArgumentParser(description="Check link-shortener routes")
   parser.add_argument("base_url", nargs="?", default="http://localhost:8000")
@@ -55,6 +81,7 @@ def main() -> int:
 
   wait_for_ping(args.base_url)
   check_shortener(args.base_url)
+  check_newsletter(args.base_url)
   print(f"Routes healthy at {args.base_url}")
   return 0
 
