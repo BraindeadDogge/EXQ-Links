@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Generate QR Code
 import type QRCode from 'qrcode'
-import { useDebounceFn } from '@vueuse/core'
+import { useDebounceFn, useClipboard } from '@vueuse/core'
 
 const { data: page } = await useAsyncData('index', () =>
   queryCollection('index').first()
@@ -54,11 +54,14 @@ async function shortenURL() {
     isShortening.value = false
   }
 }
+const { copy, copied } = useClipboard()
 
 let QRCodeLib: typeof QRCode | null = null
 
 const fgColor = ref('#000000') // main color ("dark" modules)
+const fgColorChip = computed(() => ({ backgroundColor: fgColor.value }))
 const bgColor = ref('#ffffff') // background color ("light" modules)
+const bgColorChip = computed(() => ({ backgroundColor: bgColor.value }))
 const qrCanvas = ref<HTMLCanvasElement | null>(null)
 
 const renderQr = async () => {
@@ -70,18 +73,15 @@ const renderQr = async () => {
       QRCodeLib = mod.default || mod
     }
 
-    await QRCodeLib.toCanvas(
-      qrCanvas.value,
-      shortLink.value || `https://${rawLink.value || ''}`,
-      {
-        margin: 2,
-        scale: 8,
-        color: {
-          dark: fgColor.value, // main
-          light: bgColor.value // background
-        }
+    await QRCodeLib.toCanvas(qrCanvas.value, shortLink.value, {
+      margin: 2,
+      width: 256,
+      // scale: 4,
+      color: {
+        dark: fgColor.value, // main
+        light: bgColor.value // background
       }
-    )
+    })
   } catch (err) {
     console.error('Failed to render QR', err)
   }
@@ -97,13 +97,13 @@ watch([shortLink, fgColor, bgColor], () => {
   debouncedRenderQr()
 })
 
-// const downloadQr = () => {
-//   if (!qrCanvas.value) return
-//   const link = document.createElement('a')
-//   link.href = qrCanvas.value.toDataURL('image/png')
-//   link.download = 'exq-links-qr.png' // @todo change file name
-//   link.click()
-// }
+const downloadQr = () => {
+  if (!qrCanvas.value) return
+  const link = document.createElement('a')
+  link.href = qrCanvas.value.toDataURL('image/png')
+  link.download = 'exq_io-links-qr.png' // @todo change file name
+  link.click()
+}
 </script>
 
 <template>
@@ -153,11 +153,102 @@ watch([shortLink, fgColor, bgColor], () => {
       </template>
     </UPageHero>
 
-    <UModal v-model:open="openResults">
+    <UModal
+      v-model:open="openResults"
+      class="p-5"
+    >
       <template #content>
         <ClientOnly>
-          <div class="flex items-center justify-center">
-            <canvas ref="qrCanvas" />
+          <div class="flex md:flex-row flex-col items-center md:items-start justify-between gap-5">
+            <div class="h-full flex flex-col md:items-start items-center justify-between gap-5">
+              <USeparator label="Short URL" />
+
+              <UInput
+                v-model="shortLink"
+                :ui="{ trailing: 'pr-0.5' }"
+                readonly
+                color="primary"
+                highlight
+              >
+                <template
+                  v-if="shortLink?.length"
+                  #trailing
+                >
+                  <UTooltip
+                    text="Copy to clipboard"
+                    :content="{ side: 'right' }"
+                  >
+                    <UButton
+                      :color="copied ? 'success' : 'neutral'"
+                      variant="link"
+                      size="sm"
+                      :icon="copied ? 'i-lucide-copy-check' : 'i-lucide-copy'"
+                      aria-label="Copy to clipboard"
+                      @click="copy(shortLink)"
+                    />
+                  </UTooltip>
+                </template>
+              </UInput>
+
+              <USeparator label="Settings" />
+
+              <UPopover>
+                <UButton
+                  label="Main color"
+                  color="neutral"
+                  variant="outline"
+                >
+                  <template #leading>
+                    <span
+                      :style="fgColorChip"
+                      class="size-3 rounded-full"
+                    />
+                  </template>
+                </UButton>
+
+                <template #content>
+                  <UColorPicker
+                    v-model="fgColor"
+                    class="p-2"
+                  />
+                </template>
+              </UPopover>
+
+              <UPopover>
+                <UButton
+                  label="Background color"
+                  color="neutral"
+                  variant="outline"
+                >
+                  <template #leading>
+                    <span
+                      :style="bgColorChip"
+                      class="size-3 rounded-full"
+                    />
+                  </template>
+                </UButton>
+
+                <template #content>
+                  <UColorPicker
+                    v-model="bgColor"
+                    class="p-2"
+                  />
+                </template>
+              </UPopover>
+            </div>
+            <div class="h-full flex flex-col md:items-end items-center justify-between gap-5">
+              <canvas
+                ref="qrCanvas"
+                class="rounded-lg"
+              />
+              <UButton
+                trailing-icon="i-lucide-download"
+                size="md"
+                @click="downloadQr"
+              >
+                Download
+              </UButton>
+            </div>
           </div>
         </ClientOnly>
       </template>
