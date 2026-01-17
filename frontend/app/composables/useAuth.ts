@@ -23,6 +23,7 @@ export function useAuth() {
       })
       user.value = response.user
     } catch (error) {
+      console.log(error)
       user.value = null
     } finally {
       pending.value = false
