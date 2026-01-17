@@ -30,7 +30,7 @@ services:
       DATABASE_URL: postgresql://linkshort:linkshort@postgres:5432/linkshort
       DB_POOL_MAX: 5
     # Override Dockerfile CMD
-    command: flask run --host=0.0.0.0 --port=8000 --reload
+    command: sh -c "pip install --no-cache-dir -r requirements-dev.txt && flask run --host=0.0.0.0 --port=8000 --reload"
     depends_on:
       - postgres
     profiles:

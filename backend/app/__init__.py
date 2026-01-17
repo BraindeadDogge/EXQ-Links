@@ -94,18 +94,23 @@ def create_app():
     return debug_env in ("1", "true", "yes")
 
   if _is_dev_mode():
-    from flask_swagger_ui import get_swaggerui_blueprint
+    try:
+      from flask_swagger_ui import get_swaggerui_blueprint
+    except Exception as exc:
+      app.logger.warning("Swagger UI unavailable: %s", exc)
+      get_swaggerui_blueprint = None
 
     from .openapi import get_openapi_spec
 
-    swagger_url = "/docs"
-    swagger_api_url = "/swagger.json"
-    swaggerui_blueprint = get_swaggerui_blueprint(
-        swagger_url,
-        swagger_api_url,
-        config={"app_name": "Link Shortener API"},
-    )
-    app.register_blueprint(swaggerui_blueprint, url_prefix=swagger_url)
+    if get_swaggerui_blueprint is not None:
+      swagger_url = "/docs"
+      swagger_api_url = "/swagger.json"
+      swaggerui_blueprint = get_swaggerui_blueprint(
+          swagger_url,
+          swagger_api_url,
+          config={"app_name": "Link Shortener API"},
+      )
+      app.register_blueprint(swaggerui_blueprint, url_prefix=swagger_url)
 
     @app.get("/swagger.json")
     def swagger_spec():
