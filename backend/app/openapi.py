@@ -143,6 +143,37 @@ OPENAPI_SPEC: Dict[str, Any] = {
         },
       }
     },
+    "/newsletter/base": {
+      "get": {
+        "summary": "List recent newsletter subscribers",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": False,
+            "schema": {"type": "integer", "minimum": 1, "default": 50},
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recent subscribers",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/NewsletterBaseResponse"}
+              }
+            },
+          },
+          "400": {
+            "description": "Invalid limit",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Error"}
+              }
+            },
+          },
+        },
+      }
+    },
     "/auth/register": {
       "post": {
         "summary": "Register a new user",
@@ -250,37 +281,6 @@ OPENAPI_SPEC: Dict[str, Any] = {
           },
           "401": {
             "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {"$ref": "#/components/schemas/Error"}
-              }
-            },
-          },
-        },
-      }
-    },
-    "/newsletter/base": {
-      "get": {
-        "summary": "List recent newsletter subscribers",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "required": False,
-            "schema": {"type": "integer", "minimum": 1, "default": 50},
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Recent subscribers",
-            "content": {
-              "application/json": {
-                "schema": {"$ref": "#/components/schemas/NewsletterBaseResponse"}
-              }
-            },
-          },
-          "400": {
-            "description": "Invalid limit",
             "content": {
               "application/json": {
                 "schema": {"$ref": "#/components/schemas/Error"}

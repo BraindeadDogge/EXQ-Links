@@ -4,11 +4,9 @@ import time
 
 from flask import Flask, g, jsonify, request
 from flask_cors import CORS
-from flask_swagger_ui import get_swaggerui_blueprint
 from werkzeug.exceptions import HTTPException
 
 from .db import init_engine
-from .openapi import get_openapi_spec
 from .routes.auth import register_auth_routes
 from .routes.newsletter import register_newsletter_routes
 from .routes.shortener import register_shortener_routes
@@ -84,23 +82,35 @@ def create_app():
 
   atexit.register(_log_shutdown)
 
-  swagger_url = "/docs"
-  swagger_api_url = "/swagger.json"
-  swaggerui_blueprint = get_swaggerui_blueprint(
-      swagger_url,
-      swagger_api_url,
-      config={"app_name": "Link Shortener API"},
-  )
-  app.register_blueprint(swaggerui_blueprint, url_prefix=swagger_url)
-
   @app.get("/ping")
   def ping():
     return jsonify({"status": "ok", "data": "pong"}), 200
 
-  @app.get("/swagger.json")
-  def swagger_spec():
-    base_url = request.host_url.rstrip("/")
-    return jsonify(get_openapi_spec(base_url)), 200
+  def _is_dev_mode() -> bool:
+    env = os.getenv("FLASK_ENV", "").lower()
+    if env == "development":
+      return True
+    debug_env = os.getenv("FLASK_DEBUG", "").lower()
+    return debug_env in ("1", "true", "yes")
+
+  if _is_dev_mode():
+    from flask_swagger_ui import get_swaggerui_blueprint
+
+    from .openapi import get_openapi_spec
+
+    swagger_url = "/docs"
+    swagger_api_url = "/swagger.json"
+    swaggerui_blueprint = get_swaggerui_blueprint(
+        swagger_url,
+        swagger_api_url,
+        config={"app_name": "Link Shortener API"},
+    )
+    app.register_blueprint(swaggerui_blueprint, url_prefix=swagger_url)
+
+    @app.get("/swagger.json")
+    def swagger_spec():
+      base_url = request.host_url.rstrip("/")
+      return jsonify(get_openapi_spec(base_url)), 200
 
   register_shortener_routes(app)
   register_auth_routes(app)
