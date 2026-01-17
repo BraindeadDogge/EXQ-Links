@@ -48,6 +48,10 @@ The backend now uses SQLAlchemy with the `psycopg` driver. `DATABASE_URL` can be
   - `GET /ping` returns a simple health payload.
   - `GET /shorten?url=` shortens a URL and returns `original_url`, `short_id`, and a `short_url`.
   - `POST /newsletter/subscribe` accepts `{"email": "you@example.com"}`, returns `201` when a new record is created and `200` if the address was already subscribed.
+  - `POST /auth/register` accepts `{"email": "you@example.com", "password": "..."}` and creates a user session.
+  - `POST /auth/login` accepts `{"email": "you@example.com", "password": "...", "remember": true}` and returns the current user.
+  - `POST /auth/logout` clears the current session.
+  - `GET /auth/me` returns the current user when logged in.
   - `GET /<short_id>` redirects to the original URL for that short id.
   - `GET /debug/log-stores` dumps the most recent 100 stored URLs.
 

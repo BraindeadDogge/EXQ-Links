@@ -9,6 +9,7 @@ from werkzeug.exceptions import HTTPException
 
 from .db import init_engine
 from .openapi import get_openapi_spec
+from .routes.auth import register_auth_routes
 from .routes.newsletter import register_newsletter_routes
 from .routes.shortener import register_shortener_routes
 
@@ -20,7 +21,17 @@ def create_app():
     for origin in os.getenv("CORS_ALLOW_ORIGINS", "http://localhost:3000").split(",")
     if origin.strip()
   ]
-  CORS(app, origins=allowed_origins)
+  app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
+  app.config["SESSION_COOKIE_HTTPONLY"] = True
+  app.config["SESSION_COOKIE_SAMESITE"] = os.getenv("SESSION_COOKIE_SAMESITE", "Lax")
+  app.config["SESSION_COOKIE_SECURE"] = os.getenv(
+      "SESSION_COOKIE_SECURE", "false"
+  ).lower() == "true"
+  session_domain = os.getenv("SESSION_COOKIE_DOMAIN")
+  if session_domain:
+    app.config["SESSION_COOKIE_DOMAIN"] = session_domain
+
+  CORS(app, origins=allowed_origins, supports_credentials=True)
   app.logger.info("App startup")
   init_engine(logger=app.logger)
 
@@ -92,6 +103,7 @@ def create_app():
     return jsonify(get_openapi_spec(base_url)), 200
 
   register_shortener_routes(app)
+  register_auth_routes(app)
   register_newsletter_routes(app)
 
   return app

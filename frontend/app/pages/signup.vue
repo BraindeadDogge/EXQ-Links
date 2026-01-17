@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
+import type { AuthUser } from '~/composables/useAuth'
 
 definePageMeta({
   layout: 'auth'
@@ -12,13 +13,10 @@ useSeoMeta({
 })
 
 const toast = useToast()
+const config = useRuntimeConfig()
+const { setUser } = useAuth()
 
 const fields = [{
-  name: 'name',
-  type: 'text' as const,
-  label: 'Name',
-  placeholder: 'Enter your name'
-}, {
   name: 'email',
   type: 'text' as const,
   label: 'Email',
@@ -30,30 +28,40 @@ const fields = [{
   placeholder: 'Enter your password'
 }]
 
-const providers = [{
-  label: 'Google',
-  icon: 'i-simple-icons-google',
-  onClick: () => {
-    toast.add({ title: 'Google', description: 'Login with Google' })
-  }
-}, {
-  label: 'GitHub',
-  icon: 'i-simple-icons-github',
-  onClick: () => {
-    toast.add({ title: 'GitHub', description: 'Login with GitHub' })
-  }
-}]
-
 const schema = z.object({
-  name: z.string().min(1, 'Name is required'),
   email: z.string().email('Invalid email'),
   password: z.string().min(8, 'Must be at least 8 characters')
 })
 
 type Schema = z.output<typeof schema>
 
-function onSubmit(payload: FormSubmitEvent<Schema>) {
-  console.log('Submitted', payload)
+async function onSubmit(payload: FormSubmitEvent<Schema>) {
+  try {
+    const response = await $fetch<{ user: AuthUser }>('/auth/register', {
+      baseURL: config.public.backendBaseUrl,
+      method: 'POST',
+      credentials: 'include',
+      body: {
+        email: payload.data.email,
+        password: payload.data.password
+      }
+    })
+
+    setUser(response.user)
+    toast.add({
+      title: 'Account created',
+      description: response.user.email
+    })
+    await navigateTo('/')
+  } catch (error: unknown) {
+    const err = error as { data?: { error?: string } }
+    const message = err?.data?.error || 'Signup failed. Please try again.'
+    toast.add({
+      title: 'Signup failed',
+      description: message,
+      color: 'error'
+    })
+  }
 }
 </script>
 
@@ -61,7 +69,6 @@ function onSubmit(payload: FormSubmitEvent<Schema>) {
   <UAuthForm
     :fields="fields"
     :schema="schema"
-    :providers="providers"
     title="Create an account"
     :submit="{ label: 'Create account' }"
     @submit="onSubmit"

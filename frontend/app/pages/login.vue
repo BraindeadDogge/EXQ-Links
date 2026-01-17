@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
+import type { AuthUser } from '~/composables/useAuth'
 
 definePageMeta({
   layout: 'auth'
@@ -12,6 +13,8 @@ useSeoMeta({
 })
 
 const toast = useToast()
+const config = useRuntimeConfig()
+const { setUser } = useAuth()
 
 const fields = [{
   name: 'email',
@@ -30,29 +33,42 @@ const fields = [{
   type: 'checkbox' as const
 }]
 
-const providers = [{
-  label: 'Google',
-  icon: 'i-simple-icons-google',
-  onClick: () => {
-    toast.add({ title: 'Google', description: 'Login with Google' })
-  }
-}, {
-  label: 'GitHub',
-  icon: 'i-simple-icons-github',
-  onClick: () => {
-    toast.add({ title: 'GitHub', description: 'Login with GitHub' })
-  }
-}]
-
 const schema = z.object({
   email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Must be at least 8 characters')
+  password: z.string().min(8, 'Must be at least 8 characters'),
+  remember: z.boolean().optional()
 })
 
 type Schema = z.output<typeof schema>
 
-function onSubmit(payload: FormSubmitEvent<Schema>) {
-  console.log('Submitted', payload)
+async function onSubmit(payload: FormSubmitEvent<Schema>) {
+  try {
+    const response = await $fetch<{ user: AuthUser }>('/auth/login', {
+      baseURL: config.public.backendBaseUrl,
+      method: 'POST',
+      credentials: 'include',
+      body: {
+        email: payload.data.email,
+        password: payload.data.password,
+        remember: payload.data.remember
+      }
+    })
+
+    setUser(response.user)
+    toast.add({
+      title: 'Welcome back',
+      description: response.user.email
+    })
+    await navigateTo('/')
+  } catch (error: unknown) {
+    const err = error as { data?: { error?: string } }
+    const message = err?.data?.error || 'Login failed. Please try again.'
+    toast.add({
+      title: 'Login failed',
+      description: message,
+      color: 'error'
+    })
+  }
 }
 </script>
 
@@ -60,7 +76,6 @@ function onSubmit(payload: FormSubmitEvent<Schema>) {
   <UAuthForm
     :fields="fields"
     :schema="schema"
-    :providers="providers"
     title="Welcome back"
     icon="i-lucide-lock"
     @submit="onSubmit"
