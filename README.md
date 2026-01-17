@@ -24,6 +24,12 @@ docker compose --profile dev up --build
 docker compose --profile dev down
 ```
 
+### Frontend
+
+Frontend is intended to be booted up separately. Check its README for more info.
+
+---
+
 The backend now uses SQLAlchemy with the `psycopg` driver. `DATABASE_URL` can be provided as `postgresql://...` or `postgresql+psycopg://...`; if you omit `+psycopg`, it will be added automatically.
 
 ## Requirements
