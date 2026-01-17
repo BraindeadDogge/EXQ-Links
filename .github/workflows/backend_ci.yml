@@ -116,7 +116,9 @@ jobs:
         run: pip install -r tests/backend_client/requirements.txt
 
       - name: Route check
-        run: python tests/backend_client/check_routes.py http://localhost:8000
+        run: pytest tests/backend_client -q
+        env:
+          BASE_URL: http://localhost:8000
 
       - name: Docker logs on failure
         if: failure()
