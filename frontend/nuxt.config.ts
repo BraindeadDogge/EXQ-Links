@@ -37,13 +37,14 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      backendBaseUrl: process.env.BACKEND_BASE_URL
+      backendBaseUrl: process.env.BACKEND_BASE_URL,
+      mainUrl: process.env.NUXT_PUBLIC_SITE_URL
     }
   },
 
-  routeRules: {
-    '/docs': { redirect: '/docs/getting-started', prerender: false }
-  },
+  // routeRules: {
+  //   '/docs': { redirect: '/docs/getting-started', prerender: false }
+  // },
 
   compatibilityDate: '2024-07-11',
 

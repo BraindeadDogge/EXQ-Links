@@ -24,10 +24,16 @@ FROM base AS build
 ENV NODE_ENV=production
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+ARG NUXT_PUBLIC_SITE_URL
+ENV NUXT_PUBLIC_SITE_URL=$NUXT_PUBLIC_SITE_URL
+
 ARG GTM_ID
 ENV GTM_ID=$GTM_ID
+
 ARG BACKEND_BASE_URL
 ENV BACKEND_BASE_URL=$BACKEND_BASE_URL
+
 RUN pnpm run build
 
 # Runtime image

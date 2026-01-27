@@ -1,8 +1,8 @@
 title: Short URLs with [EXQ Links]{class="text-primary"}
 description: Turn any long URL into a clean short link and ready-to-use QR code in a single click.
 seo:
-  title: Nuxt UI SaaS Template
-  description: Create stunning, fast and production-ready SaaS applications with Nuxt UI. 100+ Vue components, authentication, dark mode, and enterprise features built on Tailwind CSS.
+  title: Short URLs & QR Codes in One Click
+  description: Shorten any URL instantly and download a ready‑to‑use QR code. Clean links, quick redirects, and a simple, privacy‑minded experience.
 navigation: false
 features:
   title: Short links that scale with you

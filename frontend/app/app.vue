@@ -18,53 +18,14 @@ useHead({
   }
 })
 
+const config = useRuntimeConfig()
+
 useSeoMeta({
-  titleTemplate: '%s - Nuxt SaaS template',
-  ogImage: 'https://ui.nuxt.com/assets/templates/nuxt/saas-light.png',
-  twitterImage: 'https://ui.nuxt.com/assets/templates/nuxt/saas-light.png',
+  titleTemplate: '%s - EXQ Links',
+  ogImage: config.public.backendBaseUrl + 'og.webp',
+  twitterImage: config.public.backendBaseUrl + 'og.webp',
   twitterCard: 'summary_large_image'
 })
-
-const { data: navigation } = await useAsyncData(
-  'navigation',
-  () => queryCollectionNavigation('docs'),
-  {
-    transform: data =>
-      data.find(item => item.path === '/docs')?.children || []
-  }
-)
-const { data: files } = useLazyAsyncData(
-  'search',
-  () => queryCollectionSearchSections('docs'),
-  {
-    server: false
-  }
-)
-
-const links = [
-  {
-    label: 'Docs',
-    icon: 'i-lucide-book',
-    to: '/docs/getting-started'
-  },
-  {
-    label: 'Pricing',
-    icon: 'i-lucide-credit-card',
-    to: '/pricing'
-  },
-  {
-    label: 'Blog',
-    icon: 'i-lucide-pencil',
-    to: '/blog'
-  },
-  {
-    label: 'Changelog',
-    icon: 'i-lucide-history',
-    to: '/changelog'
-  }
-]
-
-provide('navigation', navigation)
 </script>
 
 <template>
@@ -74,15 +35,5 @@ provide('navigation', navigation)
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
-
-    <ClientOnly>
-      <LazyUContentSearch
-        :files="files"
-        shortcut="meta_k"
-        :navigation="navigation"
-        :links="links"
-        :fuse="{ resultLimit: 42 }"
-      />
-    </ClientOnly>
   </UApp>
 </template>
