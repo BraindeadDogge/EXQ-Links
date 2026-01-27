@@ -106,6 +106,27 @@ jobs:
             -e DATABASE_URL=postgresql://linkshort:linkshort@linkshort-postgres:5432/linkshort \
             -e DB_CONNECT_RETRIES=50 \
             linkshort-ci
+      - name: Wait for Postgres readiness
+        run: |
+          for i in {1..30}; do
+            if docker exec linkshort-postgres pg_isready -U linkshort >/dev/null 2>&1; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs linkshort-postgres || true
+          exit 1
+
+      - name: Wait for API readiness
+        run: |
+          for i in {1..60}; do
+            if curl -fsS http://localhost:8000/ping >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs linkshort || true
+          exit 1
 
       - name: Setup Python
         uses: actions/setup-python@v5
