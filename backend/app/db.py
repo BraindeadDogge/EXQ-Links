@@ -4,7 +4,7 @@ import time
 from contextlib import contextmanager
 from typing import Generator, Optional
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session, sessionmaker
@@ -62,7 +62,16 @@ def init_engine(logger: Optional[logging.Logger] = None) -> Engine:
   last_error: Optional[Exception] = None
   for attempt in range(retries + 1):
     try:
-      Base.metadata.create_all(bind=engine)
+      if engine.dialect.name == "postgresql":
+        lock_id = int(os.getenv("DB_INIT_LOCK_ID", "4242"))
+        with engine.begin() as conn:
+          conn.execute(text("SELECT pg_advisory_lock(:id)"), {"id": lock_id})
+          try:
+            Base.metadata.create_all(bind=conn)
+          finally:
+            conn.execute(text("SELECT pg_advisory_unlock(:id)"), {"id": lock_id})
+      else:
+        Base.metadata.create_all(bind=engine)
       logger.info("Database ready")
       last_error = None
       break
