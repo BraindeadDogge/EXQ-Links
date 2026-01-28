@@ -38,7 +38,7 @@ RUN pnpm run build
 
 # Prune to production deps for runtime
 FROM build AS prod-deps
-RUN pnpm prune --prod
+RUN pnpm prune --prod --ignore-scripts
 
 # Runtime image
 FROM base AS runner
