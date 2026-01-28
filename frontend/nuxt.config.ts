@@ -35,5 +35,10 @@ export default defineNuxtConfig({
         braceStyle: '1tbs'
       }
     }
+  },
+
+  site: {
+    name: 'EXQ Links - Short URLs & QR Codes in One Click',
+    defaultLocale: 'en'
   }
 })
