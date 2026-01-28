@@ -2,7 +2,15 @@ name: Backend-CI
 
 on:
   push:
+    paths:
+      - 'backend/**'
+      - 'tests/**'
+      - '.github/workflows/backend_ci.yml'
   pull_request:
+    paths:
+      - 'backend/**'
+      - 'tests/**'
+      - '.github/workflows/backend_ci.yml'
 
 jobs:
   build-image:

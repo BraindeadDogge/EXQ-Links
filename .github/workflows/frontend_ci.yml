@@ -2,7 +2,15 @@ name: Frontend-CI
 
 on:
   push:
+    paths:
+      - 'frontend/**'
+      - 'tests/**'
+      - '.github/workflows/frontend_ci.yml'
   pull_request:
+    paths:
+      - 'frontend/**'
+      - 'tests/**'
+      - '.github/workflows/frontend_ci.yml'
 
 defaults:
   run:
