@@ -40,7 +40,7 @@ RUN pnpm run build
 FROM build AS prod-deps
 RUN pnpm prune --prod --ignore-scripts
 
-# Runtime image
+# Runtime image 
 FROM base AS runner
 RUN apt-get update && apt-get install -y --no-install-recommends libsqlite3-0 \
   && rm -rf /var/lib/apt/lists/*
