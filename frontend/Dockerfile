@@ -36,6 +36,10 @@ ENV BACKEND_BASE_URL=$BACKEND_BASE_URL
 
 RUN pnpm run build
 
+# Prune to production deps for runtime
+FROM build AS prod-deps
+RUN pnpm prune --prod
+
 # Runtime image
 FROM base AS runner
 RUN apt-get update && apt-get install -y --no-install-recommends libsqlite3-0 \
@@ -46,6 +50,7 @@ ENV HOST=0.0.0.0
 ENV PORT=3000
 
 WORKDIR /app
+COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=build /app/.output ./.output
 
 EXPOSE 3000
