@@ -4,31 +4,6 @@
 export default defineNuxtConfig({
   modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/ui', '@nuxt/content', '@vueuse/nuxt', 'nuxt-og-image', '@nuxt/hints', '@nuxt/scripts', '@nuxtjs/seo'],
 
-  // $production: {
-  //   app: {
-  //     head: {
-  //       noscript: gtmId
-  //         ? [
-  //             {
-  //               tagPosition: 'bodyOpen',
-  //               innerHTML: `<iframe src="https://www.googletagmanager.com/ns.html?id=${gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`
-  //             }
-  //           ]
-  //         : []
-  //     }
-  //   },
-  //   scripts: {
-  //     defaultScriptOptions: {
-  //       trigger: 'server'
-  //     },
-  //     registry: {
-  //       googleTagManager: {
-  //         id: gtmId
-  //       }
-  //     }
-  //   }
-  // },
-
   devtools: {
     enabled: true
   },
@@ -41,10 +16,6 @@ export default defineNuxtConfig({
       mainUrl: process.env.NUXT_PUBLIC_SITE_URL
     }
   },
-
-  // routeRules: {
-  //   '/docs': { redirect: '/docs/getting-started', prerender: false }
-  // },
 
   compatibilityDate: '2024-07-11',
 
