@@ -10,6 +10,11 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  site: {
+    name: 'EXQ Links - Short URLs & QR Codes in One Click',
+    defaultLocale: 'en'
+  },
+
   runtimeConfig: {
     public: {
       backendBaseUrl: process.env.BACKEND_BASE_URL,
@@ -35,10 +40,5 @@ export default defineNuxtConfig({
         braceStyle: '1tbs'
       }
     }
-  },
-
-  site: {
-    name: 'EXQ Links - Short URLs & QR Codes in One Click',
-    defaultLocale: 'en'
   }
 })
