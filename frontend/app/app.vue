@@ -22,8 +22,8 @@ const config = useRuntimeConfig()
 
 useSeoMeta({
   titleTemplate: '%s - EXQ Links',
-  ogImage: config.public.backendBaseUrl + 'og.webp',
-  twitterImage: config.public.backendBaseUrl + 'og.webp',
+  ogImage: config.public.mainUrl + 'og.webp',
+  twitterImage: config.public.mainUrl + 'og.webp',
   twitterCard: 'summary_large_image'
 })
 </script>
