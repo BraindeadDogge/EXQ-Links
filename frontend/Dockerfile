@@ -52,6 +52,8 @@ ENV PORT=3000
 WORKDIR /app
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=build /app/.output ./.output
+RUN rm -rf /app/.output/server/node_modules \
+  && ln -s /app/node_modules /app/.output/server/node_modules
 
 EXPOSE 3000
 CMD ["node", ".output/server/index.mjs"]
