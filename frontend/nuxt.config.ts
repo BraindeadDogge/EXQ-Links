@@ -27,7 +27,7 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       routes: [
-        '/'
+        '/', '/sitemap.xml'
       ],
       crawlLinks: true
     }
@@ -40,5 +40,9 @@ export default defineNuxtConfig({
         braceStyle: '1tbs'
       }
     }
+  },
+
+  sitemap: {
+    zeroRuntime: true // @audit-info untill i add some CMS
   }
 })

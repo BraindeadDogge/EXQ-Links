@@ -9,7 +9,8 @@ definePageMeta({
 
 useSeoMeta({
   title: 'Sign up',
-  description: 'Create an account to get started'
+  description: 'Create an account to get started',
+  robots: 'noindex, follow'
 })
 
 const toast = useToast()
