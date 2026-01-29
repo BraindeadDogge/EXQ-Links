@@ -1,6 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 // const gtmId = process.env.GTM_ID
 
+const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://exq.io'
+
 export default defineNuxtConfig({
   modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/ui', '@nuxt/content', '@vueuse/nuxt', 'nuxt-og-image', '@nuxt/hints', '@nuxt/scripts', '@nuxtjs/seo'],
 
@@ -11,6 +13,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   site: {
+    url: siteUrl,
     name: 'EXQ Links - Short URLs & QR Codes in One Click',
     defaultLocale: 'en'
   },
@@ -18,7 +21,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       backendBaseUrl: process.env.BACKEND_BASE_URL,
-      mainUrl: process.env.NUXT_PUBLIC_SITE_URL
+      mainUrl: siteUrl
     }
   },
 
@@ -39,6 +42,14 @@ export default defineNuxtConfig({
         commaDangle: 'never',
         braceStyle: '1tbs'
       }
+    }
+  },
+
+  schemaOrg: {
+    identity: {
+      type: 'Organization',
+      name: 'EXQ Links',
+      url: siteUrl
     }
   },
 

@@ -10,6 +10,8 @@ const config = useRuntimeConfig()
 
 const title = page.value?.seo?.title || page.value?.title
 const description = page.value?.seo?.description || page.value?.description
+const siteUrl = config.public.mainUrl || 'https://exq.io'
+const canonicalUrl = new URL('/', siteUrl).toString()
 
 useSeoMeta({
   titleTemplate: '',
@@ -18,6 +20,18 @@ useSeoMeta({
   description,
   ogDescription: description
 })
+
+useSchemaOrg([
+  defineWebSite({
+    name: 'EXQ Links',
+    url: siteUrl
+  }),
+  defineWebPage({
+    name: title,
+    description,
+    url: canonicalUrl
+  })
+])
 
 // Shorten url algorithm
 const rawLink: Ref<string> = ref('')

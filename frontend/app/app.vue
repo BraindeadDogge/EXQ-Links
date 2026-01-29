@@ -19,14 +19,16 @@ useHead({
 })
 
 const config = useRuntimeConfig()
+const siteUrl = config.public.mainUrl || 'https://exq.io'
+const ogImageUrl = new URL('/og.png', siteUrl).toString()
 
 useSeoMeta({
   titleTemplate: '%s - EXQ Links',
-  ogImage: config.public.mainUrl + 'og.png',
+  ogImage: ogImageUrl,
   ogImageWidth: 1200,
   ogImageHeight: 630,
   ogImageType: 'image/png',
-  twitterImage: config.public.mainUrl + 'og.png',
+  twitterImage: ogImageUrl,
   twitterCard: 'summary_large_image'
 })
 </script>
