@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 // const gtmId = process.env.GTM_ID
 
-const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://exq.io'
+const siteUrl = process.env.FRONTEND_BASE_URL || 'https://exq.io'
 
 export default defineNuxtConfig({
   modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/ui', '@nuxt/content', '@vueuse/nuxt', 'nuxt-og-image', '@nuxt/hints', '@nuxt/scripts', '@nuxtjs/seo'],
