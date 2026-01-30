@@ -88,13 +88,15 @@ export const auth = betterAuth({
   account: {
     accountLinking: {
       enabled: true,
-      trustedProviders: ['google']
+      trustedProviders: ['google'],
+      updateUserInfoOnLink: true
     }
   },
   socialProviders: {
     google: {
       clientId: googleClientId,
       clientSecret: googleClientSecret,
+      overrideUserInfoOnSignIn: true,
       scope: ['email', 'profile']
     }
   },
