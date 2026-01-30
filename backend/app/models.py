@@ -28,14 +28,3 @@ class NewsletterSubscriber(Base):
       DateTime(timezone=True), server_default=func.now(), nullable=False
   )
 
-
-class User(Base):
-  __tablename__ = "users"
-
-  id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-  email: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
-  password_hash: Mapped[str] = mapped_column(Text, nullable=False)
-  created_at: Mapped[datetime] = mapped_column(
-      DateTime(timezone=True), server_default=func.now(), nullable=False
-  )
-  last_login_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)

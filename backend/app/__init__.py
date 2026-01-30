@@ -7,7 +7,6 @@ from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 
 from .db import init_engine
-from .routes.auth import register_auth_routes
 from .routes.newsletter import register_newsletter_routes
 from .routes.shortener import register_shortener_routes
 
@@ -118,7 +117,6 @@ def create_app():
       return jsonify(get_openapi_spec(base_url)), 200
 
   register_shortener_routes(app)
-  register_auth_routes(app)
   register_newsletter_routes(app)
 
   return app

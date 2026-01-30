@@ -16,14 +16,22 @@
 //   to: '/changelog'
 // }])
 
-const { user, fetchUser } = useAuth()
-const isLoggedIn = computed(() => Boolean(user.value))
+import { authClient } from '~/lib/auth-client'
 
-onMounted(() => {
-  if (!user.value) {
-    fetchUser()
+const { data: session, refresh } = await authClient.useSession(useFetch)
+const isLoggedIn = computed(() => Boolean(session.value?.user))
+const isSigningOut = ref(false)
+
+const onSignOut = async () => {
+  if (isSigningOut.value) return
+  isSigningOut.value = true
+  try {
+    await authClient.signOut()
+    await refresh()
+  } finally {
+    isSigningOut.value = false
   }
-})
+}
 </script>
 
 <template>
@@ -44,39 +52,26 @@ onMounted(() => {
 
       <template v-if="isLoggedIn">
         <UBadge
-          label="Logged in"
+          label="Signed in"
           color="success"
-          class="lg:hidden"
+          class="hidden lg:inline-flex h-8"
         />
-        <UBadge
-          label="Logged in"
-          color="success"
+        <UButton
+          label="Sign out"
+          color="neutral"
+          variant="outline"
           class="hidden lg:inline-flex"
+          :loading="isSigningOut"
+          @click="onSignOut"
         />
       </template>
       <template v-else>
-        <UButton
-          icon="i-lucide-log-in"
-          color="neutral"
-          variant="ghost"
-          to="/login"
-          class="lg:hidden"
-        />
-
         <UButton
           label="Sign in"
           color="neutral"
           variant="outline"
           to="/login"
           class="hidden lg:inline-flex"
-        />
-
-        <UButton
-          label="Sign up"
-          color="neutral"
-          trailing-icon="i-lucide-arrow-right"
-          class="hidden lg:inline-flex"
-          to="/signup"
         />
       </template>
     </template>
@@ -92,9 +87,17 @@ onMounted(() => {
 
       <template v-if="isLoggedIn">
         <UBadge
-          label="Logged in"
+          label="Signed in"
           color="success"
-          class="mb-3"
+          class="mb-3 h-8 w-full justify-center"
+        />
+        <UButton
+          label="Sign out"
+          color="neutral"
+          variant="subtle"
+          block
+          :loading="isSigningOut"
+          @click="onSignOut"
         />
       </template>
       <template v-else>
@@ -103,13 +106,6 @@ onMounted(() => {
           color="neutral"
           variant="subtle"
           to="/login"
-          block
-          class="mb-3"
-        />
-        <UButton
-          label="Sign up"
-          color="neutral"
-          to="/signup"
           block
         />
       </template>
