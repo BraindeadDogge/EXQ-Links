@@ -18,8 +18,8 @@
 
 import { authClient } from '~/lib/auth-client'
 
-const { data: session, refresh } = await authClient.useSession(useFetch)
-const isLoggedIn = computed(() => Boolean(session.value?.user))
+const session = authClient.useSession()
+const isLoggedIn = computed(() => Boolean(session.value.data?.user))
 const isSigningOut = ref(false)
 
 const onSignOut = async () => {
@@ -27,7 +27,7 @@ const onSignOut = async () => {
   isSigningOut.value = true
   try {
     await authClient.signOut()
-    await refresh()
+    await session.value.refetch?.()
   } finally {
     isSigningOut.value = false
   }
