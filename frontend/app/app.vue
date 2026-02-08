@@ -22,6 +22,29 @@ const config = useRuntimeConfig()
 const siteUrl = config.public.mainUrl || 'https://exq.io'
 const ogImageUrl = new URL('/og.png', siteUrl).toString()
 
+// Google Tag Manager with consent defaults for CookieYes CMP (EEA/TCF v2.2)
+const gtmId = config.public.gtmId as string | undefined
+if (gtmId) {
+  useScriptGoogleTagManager({
+    id: gtmId,
+    onBeforeGtmStart(gtag) {
+      // Set all consent signals to denied by default.
+      // CookieYes CMP (loaded as a GTM tag) will update these
+      // based on user choices and stored preferences.
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        functionality_storage: 'denied',
+        personalization_storage: 'denied',
+        security_storage: 'granted',
+        wait_for_update: 500
+      })
+    }
+  })
+}
+
 useSeoMeta({
   titleTemplate: '%s - EXQ Links',
   ogImage: ogImageUrl,

@@ -62,7 +62,17 @@ Test files must be named `test_*.py`. Route tests go in `tests/backend_client/`,
 
 **Backend**: `DATABASE_URL`, `SECRET_KEY`, `SHORT_HOST`, `SESSION_COOKIE_SAMESITE`, `SESSION_COOKIE_SECURE`, `DB_POOL_MAX`, `DB_CONNECT_RETRIES`
 
-**Frontend/Auth**: `FRONTEND_BASE_URL`, `BACKEND_BASE_URL`, `DATABASE_URL`, `BETTER_AUTH_URL`, `BETTER_AUTH_TRUSTED_ORIGINS`, `RESEND_API_KEY`, `RESEND_FROM`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+**Frontend/Auth**: `FRONTEND_BASE_URL`, `BACKEND_BASE_URL`, `DATABASE_URL`, `BETTER_AUTH_URL`, `BETTER_AUTH_TRUSTED_ORIGINS`, `RESEND_API_KEY`, `RESEND_FROM`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GTM_ID`
+
+**IMPORTANT — Adding new frontend env vars**: Railway injects env vars at build time via Docker build args. Every new frontend env var **must** be added in three places:
+1. `frontend/.env.example` — placeholder for local dev
+2. `frontend/nuxt.config.ts` — `runtimeConfig` (public or private)
+3. `frontend/Dockerfile` — as an `ARG`+`ENV` pair in the `build` stage (before `RUN pnpm run build`), following the existing pattern:
+   ```dockerfile
+   ARG MY_NEW_VAR
+   ENV MY_NEW_VAR=$MY_NEW_VAR
+   ```
+   Without this, the env var will be undefined during the Nuxt build on Railway.
 
 ## Coding Conventions
 - 2-space indentation everywhere (backend and frontend)

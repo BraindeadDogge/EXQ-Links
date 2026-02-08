@@ -1,6 +1,4 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-// const gtmId = process.env.GTM_ID
-
 const siteUrl = process.env.FRONTEND_BASE_URL || 'https://exq.io'
 
 export default defineNuxtConfig({
@@ -21,7 +19,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       backendBaseUrl: process.env.BACKEND_BASE_URL,
-      mainUrl: siteUrl
+      mainUrl: siteUrl,
+      gtmId: process.env.GTM_ID
     }
   },
 
