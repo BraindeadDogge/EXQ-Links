@@ -74,6 +74,8 @@ Test files must be named `test_*.py`. Route tests go in `tests/backend_client/`,
    ```
    Without this, the env var will be undefined during the Nuxt build on Railway.
 
+**IMPORTANT — Cookie policy**: When adding any feature that introduces a new cookie (auth, analytics, preferences, third-party scripts, etc.), you **must** add it to the cookie table in `frontend/content/1.cookie.md` under the appropriate category. Each cookie entry needs: name, duration, and description. Never ship a cookie without declaring it in the policy.
+
 ## Coding Conventions
 - 2-space indentation everywhere (backend and frontend)
 - Python: snake_case for modules and functions
