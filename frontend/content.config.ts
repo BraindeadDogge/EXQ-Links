@@ -23,5 +23,13 @@ export const collections = {
         items: z.array(createFeatureItemSchema())
       })
     })
+  }),
+  cookie: defineCollection({
+    source: '1.cookie.md',
+    type: 'page',
+    schema: z.object({
+      effectiveDate: z.string().nonempty(),
+      lastUpdated: z.string().nonempty()
+    })
   })
 }
