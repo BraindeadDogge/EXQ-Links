@@ -189,10 +189,12 @@ const switchEmail = () => {
       Use Google or request a one-time code.
     </template>
 
-    <!-- @todo temp -->
-    <template #footer> 
+    <template #footer>
       By signing in, you agree to our
-      <ULink to="/terms" class="text-primary font-medium">Terms of Service</ULink>.
+      <ULink
+        to="/terms"
+        class="text-primary font-medium"
+      >Terms of Service</ULink>.
     </template>
   </UAuthForm>
 
