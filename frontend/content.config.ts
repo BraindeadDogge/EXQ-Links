@@ -38,5 +38,10 @@ export const collections = {
     source: '2.privacy.md',
     type: 'page',
     schema: createLegalPageSchema()
+  }),
+  terms: defineCollection({
+    source: '3.terms.md',
+    type: 'page',
+    schema: createLegalPageSchema()
   })
 }
