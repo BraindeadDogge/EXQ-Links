@@ -20,7 +20,12 @@ export default defineNuxtConfig({
     public: {
       backendBaseUrl: process.env.BACKEND_BASE_URL,
       mainUrl: siteUrl,
-      gtmId: process.env.GTM_ID
+      gtmId: process.env.GTM_ID,
+      contactCompany: process.env.CONTACT_COMPANY || 'EXQ Links',
+      contactAddress: process.env.CONTACT_ADDRESS,
+      contactGrievanceAddress: process.env.CONTACT_GRIEVANCE_ADDRESS,
+      contactEmail: process.env.CONTACT_EMAIL,
+      contactPhone: process.env.CONTACT_PHONE
     }
   },
 

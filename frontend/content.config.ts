@@ -14,6 +14,11 @@ const createFeatureItemSchema = () => createBaseSchema().extend({
   upcoming: z.boolean().optional()
 })
 
+const createLegalPageSchema = () => z.object({
+  effectiveDate: z.string().nonempty(),
+  lastUpdated: z.string().nonempty()
+})
+
 export const collections = {
   index: defineCollection({
     source: '0.index.yml',
@@ -27,9 +32,11 @@ export const collections = {
   cookie: defineCollection({
     source: '1.cookie.md',
     type: 'page',
-    schema: z.object({
-      effectiveDate: z.string().nonempty(),
-      lastUpdated: z.string().nonempty()
-    })
+    schema: createLegalPageSchema()
+  }),
+  privacy: defineCollection({
+    source: '2.privacy.md',
+    type: 'page',
+    schema: createLegalPageSchema()
   })
 }
