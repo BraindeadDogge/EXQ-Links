@@ -48,7 +48,7 @@ const onSignOut = async () => {
     /> -->
 
     <template #right>
-      <UColorModeButton />
+      <ColorModeButton />
 
       <template v-if="isLoggedIn">
         <UBadge
